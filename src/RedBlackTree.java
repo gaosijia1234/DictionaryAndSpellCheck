@@ -12,7 +12,7 @@ public class RedBlackTree<Key extends Comparable<Key>> {
         Node<String> leftChild;
         Node<String> rightChild;
         boolean isRed;
-        int color;
+        int color; // 1 is black, 0 is red
 
         public Node(Key data){
             this.key = data;
@@ -173,9 +173,11 @@ public class RedBlackTree<Key extends Comparable<Key>> {
      * @param current
      */
     public void fixTree(RedBlackTree.Node<String> current) {
+        // not sure if it is the original parent, or if it is necessary
         Node originalParent = current.parent;
         Node grandParent = current.parent.parent;
         Node parent = current.parent;
+        Node aunt = getAunt(current);
 
         // 1) current is the root node. Make it black and quit.
         if (current == root){
@@ -186,24 +188,58 @@ public class RedBlackTree<Key extends Comparable<Key>> {
         if (parent.color == 1){
             return;
         }
+
         //3) The current node is red and the parent node is red.
         // The tree is unbalanced and you will have to modify it in the following way.
-
         if (current.color == 0 && parent.color == 0){
+
             // I. If the aunt node is empty or black, then there are four sub cases that you have to process.
             if (getAunt(current) == null || getAunt(current).color == 1){
+
                 // A) grandparent ?parent(is left child)? current (is right child) case.
-                if (isLeftChild(parent, current) && isRight)
-                // Solution: rotate the parent left and then continue recursively fixing the tree starting with the original parent.
-                rotateLeft(parent);
-                fixTree(originalParent);
+                if (isLeftChild(grandParent, parent) && isRightChild(parent, current)){
+                    // Solution: rotate the parent left and then continue recursively fixing the tree starting with the original parent.
+                    rotateLeft(parent);
+                    fixTree(originalParent);
+                }
 
                 // B) grandparent ?parent (is right child)? current (is left child) case.
-                // Solution: rotate the parent right and then continue recursively fixing the tree starting with the original parent.
+                if (isRightChild(grandParent, parent) && isLeftChild(parent, current)){
+                    // Solution: rotate the parent right and then continue recursively fixing the tree starting with the original parent.
+                    rotateRight(parent);
+                    fixTree(originalParent);
+                }
+
+                //C) grandparent ?parent (is left child)? current (is left child) case.
+                if (isLeftChild(grandParent, parent) && isLeftChild(parent, current)){
+                    // Solution: make the parent black, make the grandparent red,
+                    // rotate the grandparent to the right and quit, tree is balanced
+                    parent.color = 1;
+                    grandParent.color = 0;
+                    rotateRight(grandParent);
+                    return;
+                }
+
+                // D) grandparent ?parent (is right child)? current (is right child) case.
+                if (isRightChild(grandParent, parent) && isRightChild(parent, current)){
+                    //Solution: make the parent black, make the grandparent red,
+                    // rotate the grandparent to the left, quit tree is balanced.
+                    parent.color = 1;
+                    grandParent.color = 0;
+                    rotateLeft(grandParent);
+                    return;
+                }
             }
 
-
-
+            // II. Else if the aunt is red, then make the parent black,
+            // make the aunt black, make the grandparent red
+            // and continue recursively fix up the tree starting with the grandparent.
+            else if (aunt.color == 0){
+                parent.color = 1;
+                aunt.color = 1;
+                grandParent.color = 0;
+                fixTree(grandParent);
+            }
         }
 
     }
