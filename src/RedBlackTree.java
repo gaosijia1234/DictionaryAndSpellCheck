@@ -202,27 +202,50 @@ public class RedBlackTree<Key extends Comparable<Key>> {
         // 4. connect x and y
         temp.leftChild = node;
         node.parent = temp;
-
-
-
-
-
-
-
-
-
-
-
     }
 
     public void rotateRight(RedBlackTree.Node<String> n){
-        // y --> x
-        Node left = n.leftChild;
-        Node right = n.rightChild;
-        Node parent = n;
+        // 1. define node x and y
+        // node: y
+        // x: temp
+        Node node = n;
+        Node temp = node.leftChild;
+        Node originalParent = node.parent;
 
-        n.rightChild = parent; // C --> y
-        parent = left; // x becomes parent
+        // 2. connect B and y
+        Node B = temp.rightChild;
+        node.leftChild = B; // so at this point, B get both node-x and temp-y points to it
+        // make sure B is not a leaf, update nodes' values for B and x
+        if (B != null){
+            // Connect B with parent node: node
+            B.parent = node;
+        }
+
+        // 3. connect y and x's parent
+        // if x's parent is null. then x is the root, so change root to be y
+        if (originalParent == null){
+            root = temp;
+            temp.parent = null;
+        } // if the originalParent is not null
+        else {
+            // if x is less than x's parent, x is the left child, so y is one of the left childs
+            if (node.compareTo(originalParent) < 0) {
+                temp = originalParent.leftChild;
+                originalParent.leftChild = temp;
+                // connect y with initial parent
+                temp.parent = originalParent;
+
+            } else {
+                temp = originalParent.rightChild;
+                originalParent.rightChild = temp;
+                // parent connect y with initial parent
+                temp.parent = originalParent;
+            }
+        }
+
+        // 4. connect x and y
+        temp.rightChild = node;
+        node.parent = temp;
     }
 
     /**
