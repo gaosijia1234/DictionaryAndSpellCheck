@@ -173,26 +173,36 @@ public class RedBlackTree<Key extends Comparable<Key>> {
      * @param current
      */
     public void fixTree(RedBlackTree.Node<String> current) {
+        Node originalParent = current.parent;
+        Node grandParent = current.parent.parent;
+        Node parent = current.parent;
+
         // 1) current is the root node. Make it black and quit.
         if (current == root){
             current.color = 1;
             return;
         }
         // 2) Parent is black. Quit, the tree is a Red Black Tree.
-        if (current.parent.color == 1){
+        if (parent.color == 1){
             return;
         }
         //3) The current node is red and the parent node is red.
         // The tree is unbalanced and you will have to modify it in the following way.
-        Node originalParent = current.parent;
-        if (current.color == 0 && current.parent.color == 0){
+
+        if (current.color == 0 && parent.color == 0){
             // I. If the aunt node is empty or black, then there are four sub cases that you have to process.
             if (getAunt(current) == null || getAunt(current).color == 1){
                 // A) grandparent ?parent(is left child)? current (is right child) case.
+                if (isLeftChild(parent, current) && isRight)
                 // Solution: rotate the parent left and then continue recursively fixing the tree starting with the original parent.
-                rotateLeft(current.parent);
+                rotateLeft(parent);
                 fixTree(originalParent);
+
+                // B) grandparent ?parent (is right child)? current (is left child) case.
+                // Solution: rotate the parent right and then continue recursively fixing the tree starting with the original parent.
             }
+
+
 
         }
 
@@ -208,6 +218,14 @@ public class RedBlackTree<Key extends Comparable<Key>> {
     public boolean isLeftChild(RedBlackTree.Node<String> parent, RedBlackTree.Node<String> child)
     {
         if (child.compareTo(parent) < 0 ) {//child is less than parent
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isRightChild(RedBlackTree.Node<String> parent, RedBlackTree.Node<String> child)
+    {
+        if (child.compareTo(parent) > 0 ) {//child is greater than parent
             return true;
         }
         return false;
