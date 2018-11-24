@@ -161,11 +161,68 @@ public class RedBlackTree<Key extends Comparable<Key>> {
      * @param n
      */
     public void rotateLeft(RedBlackTree.Node<String> n){
-        //
+        // 1. define node x and y
+        // node: x
+        // y: temp
+        Node node = n;
+        Node temp = node.rightChild;
+        Node originalParent = node.parent;
+
+        // 2. connect B and x
+        Node B = temp.leftChild;
+        node.rightChild = B; // so at this point, B get both node-x and temp-y points to it
+        // make sure B is not a leaf, update nodes' values for B and x
+        if (B != null){
+            // Connect B with parent node: node
+            B.parent = node;
+        }
+
+        // 3. connect y and x's parent
+        // if x's parent is null. then x is the root, so change root to be y
+        if (originalParent == null){
+            root = temp;
+            temp.parent = null;
+        } // if the originalParent is not null
+        else {
+            // if x is less than x's parent, x is the left child, so y is one of the left childs
+            if (node.compareTo(originalParent) < 0) {
+                temp = originalParent.leftChild;
+                originalParent.leftChild = temp;
+                // connect y with initial parent
+                temp.parent = originalParent;
+
+            } else {
+                temp = originalParent.rightChild;
+                originalParent.rightChild = temp;
+                // parent connect y with initial parent
+                temp.parent = originalParent;
+            }
+        }
+
+        // 4. connect x and y
+        temp.leftChild = node;
+        node.parent = temp;
+
+
+
+
+
+
+
+
+
+
+
     }
 
     public void rotateRight(RedBlackTree.Node<String> n){
-        //
+        // y --> x
+        Node left = n.leftChild;
+        Node right = n.rightChild;
+        Node parent = n;
+
+        n.rightChild = parent; // C --> y
+        parent = left; // x becomes parent
     }
 
     /**
@@ -184,6 +241,7 @@ public class RedBlackTree<Key extends Comparable<Key>> {
             current.color = 1;
             return;
         }
+
         // 2) Parent is black. Quit, the tree is a Red Black Tree.
         if (parent.color == 1){
             return;
