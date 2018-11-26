@@ -1,4 +1,6 @@
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import static java.lang.System.currentTimeMillis;
 
@@ -16,8 +18,8 @@ public class RedBlackTree<Key extends Comparable<Key>> {
         boolean isRed;
         int color; // 1 is black, 0 is red
 
-        public Node(Key data){
-            this.key = data;
+        public Node(Key key){
+            this.key = key;
             leftChild = null;
             rightChild = null;
         }
@@ -40,33 +42,6 @@ public class RedBlackTree<Key extends Comparable<Key>> {
         }
     }
 
-    public boolean spellCheck(String inputFile) throws FileNotFoundException, IOException {
-        boolean isFound = false;
-        double start = currentTimeMillis();
-        // check the word by calling lookup();
-        File file = new File("/Users/sijiagao/IdeaProjects/sjsu.Gao.cs146.project3/src/myPoem");
-
-        BufferedReader br = new BufferedReader(new FileReader(file));
-
-        String st;
-        String word;
-        while ((st = br.readLine()) != null) {
-            String[] words = st.split("\\s+");
-            for (String s: words) {
-                Node node = lookup(s);
-                if (node == null){
-                    isFound = false;
-                }
-                else
-                    isFound = true;
-            }
-        }
-
-        double end = currentTimeMillis();
-        double duration = end - start;
-        System.out.println("spellCheck duration is " + duration);
-        return isFound;
-    }
 
     public boolean isLeaf(RedBlackTree.Node<String> n){
         // if only the root, it is leaf
@@ -111,23 +86,13 @@ public class RedBlackTree<Key extends Comparable<Key>> {
      * place a new node in the RB tree with data the parameter and color it red.
      * @param data
      */
-    public void addNode(String data){  	//this < that  <0.  this > that  >0
-//        Time startTime = new Time();
-
-        double start = currentTimeMillis();
-
-        //	fill
-        // read each line and add to the tree
-        // http://www.math.sjsu.edu/~foster/dictionary.txt
+    public void addNode(String data, Node node) {  	//this < that  <0.  this > that  >0
 
 
-
-        double end = currentTimeMillis();
-        double duration = end - start;
     }
 
-    public void insert(String data){
-        addNode(data);
+    public void insert(String data) {
+        addNode(data, root);
     }
 
     /**
@@ -137,43 +102,12 @@ public class RedBlackTree<Key extends Comparable<Key>> {
      */
     public RedBlackTree.Node<String> lookup(String k){
         //fill
-    }
+        Node current = root;
+        if (k.compareTo(current.key.toString()) < 0){
 
-    /**
-     * returns the sibling node of the parameter If the sibling does not exist, then return null.
-     * @param n
-     * @return
-     */
-    public RedBlackTree.Node<String> getSibling(RedBlackTree.Node<String> n){
-        if (isLeftChild(n.parent, n)){
-            return n.parent.rightChild;
         }
-        else
-            return n.parent.leftChild;
     }
 
-    /**
-     * returns the aunt of the parameter or the sibling of the parent node.
-     * If the aunt node does not exist, then return null.
-     * @param n
-     * @return
-     */
-    public RedBlackTree.Node<String> getAunt(RedBlackTree.Node<String> n){
-        if (isLeftChild(n.parent.parent, n.parent)){
-            return n.parent.parent.rightChild;
-        }
-        else
-            return n.parent.parent.leftChild;
-    }
-
-    /**
-     * returns the parent of your parent node, if it doesn?t exist return null.
-     * @param n
-     * @return
-     */
-    public RedBlackTree.Node<String> getGrandparent(RedBlackTree.Node<String> n){
-        return n.parent.parent;
-    }
 
     /**
      * left, resp. right, rotate around the node parameter.
@@ -351,6 +285,55 @@ public class RedBlackTree<Key extends Comparable<Key>> {
         return false;
     }
 
+    public void preOrderVisit(Visitor<String> v) {
+        preOrderVisit(root, v);
+    }
+
+    private static void preOrderVisit(RedBlackTree.Node<String> n, Visitor<String> v) {
+        if (n == null) {
+            return;
+        }
+        v.visit(n);
+        preOrderVisit(n.leftChild, v);
+        preOrderVisit(n.rightChild, v);
+    }
+
+    /**
+     * returns the sibling node of the parameter If the sibling does not exist, then return null.
+     * @param n
+     * @return
+     */
+    public RedBlackTree.Node<String> getSibling(RedBlackTree.Node<String> n){
+        if (isLeftChild(n.parent, n)){
+            return n.parent.rightChild;
+        }
+        else
+            return n.parent.leftChild;
+    }
+
+    /**
+     * returns the aunt of the parameter or the sibling of the parent node.
+     * If the aunt node does not exist, then return null.
+     * @param n
+     * @return
+     */
+    public RedBlackTree.Node<String> getAunt(RedBlackTree.Node<String> n){
+        if ((n.parent != null)){
+            return getSibling(n.parent);
+        }
+        else
+            return null;
+    }
+
+    /**
+     * returns the parent of your parent node, if it doesn?t exist return null.
+     * @param n
+     * @return
+     */
+    public RedBlackTree.Node<String> getGrandparent(RedBlackTree.Node<String> n){
+        return n.parent.parent;
+    }
+
     public boolean isLeftChild(RedBlackTree.Node<String> parent, RedBlackTree.Node<String> child)
     {
         if (child.compareTo(parent) < 0 ) {//child is less than parent
@@ -367,17 +350,5 @@ public class RedBlackTree<Key extends Comparable<Key>> {
         return false;
     }
 
-    public void preOrderVisit(Visitor<String> v) {
-        preOrderVisit(root, v);
-    }
-
-    private static void preOrderVisit(RedBlackTree.Node<String> n, Visitor<String> v) {
-        if (n == null) {
-            return;
-        }
-        v.visit(n);
-        preOrderVisit(n.leftChild, v);
-        preOrderVisit(n.rightChild, v);
-    }
 }
 
