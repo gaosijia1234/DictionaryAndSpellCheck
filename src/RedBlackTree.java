@@ -1,3 +1,5 @@
+import java.io.*;
+
 import static java.lang.System.currentTimeMillis;
 
 public class RedBlackTree<Key extends Comparable<Key>> {
@@ -38,19 +40,41 @@ public class RedBlackTree<Key extends Comparable<Key>> {
         }
     }
 
-    public boolean spellCheck(String inputFile) {
+    public boolean spellCheck(String inputFile) throws FileNotFoundException, IOException {
+        boolean isFound = false;
         double start = currentTimeMillis();
         // check the word by calling lookup();
+        File file = new File("/Users/sijiagao/IdeaProjects/sjsu.Gao.cs146.project3/src/myPoem");
+
+        BufferedReader br = new BufferedReader(new FileReader(file));
+
+        String st;
+        String word;
+        while ((st = br.readLine()) != null) {
+            String[] words = st.split("\\s+");
+            for (String s: words) {
+                Node node = lookup(s);
+                if (node == null){
+                    isFound = false;
+                }
+                else
+                    isFound = true;
+            }
+        }
 
         double end = currentTimeMillis();
         double duration = end - start;
+        System.out.println("spellCheck duration is " + duration);
+        return isFound;
     }
 
     public boolean isLeaf(RedBlackTree.Node<String> n){
+        // if only the root, it is leaf
         if (n.equals(root) && n.leftChild == null && n.rightChild == null)
             return true;
         if (n.equals(root))
             return false;
+        // if has no child, it is leaf
         if (n.leftChild == null && n.rightChild == null){
             return true;
         }
@@ -63,10 +87,6 @@ public class RedBlackTree<Key extends Comparable<Key>> {
          @param n the visited node
          */
         void visit(Node<Key> n);
-    }
-
-    public void visit(Node<Key> n){
-        System.out.println(n.key);
     }
 
     public void printTree(){  //preorder: visit, go left, go right
@@ -147,8 +167,7 @@ public class RedBlackTree<Key extends Comparable<Key>> {
     }
 
     /**
-     * Similar to getAunt() and getSibling(), returns the parent of your parent node,
-     * if it doesn?t exist return null.
+     * returns the parent of your parent node, if it doesn?t exist return null.
      * @param n
      * @return
      */
@@ -360,7 +379,5 @@ public class RedBlackTree<Key extends Comparable<Key>> {
         preOrderVisit(n.leftChild, v);
         preOrderVisit(n.rightChild, v);
     }
-
-
 }
 
