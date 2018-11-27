@@ -108,27 +108,37 @@ public class RedBlackTree<Key extends Comparable<Key>> {
         Node temp = null;
         // give the data a node
         Node insertNode = new Node(data);
+        String keyTemp;
+        String sibKey;
 
-        // if there is no node at all, new node becomes the root
+        // at the first time, root passed into node, if the root is null
         if (node == null){
             root = insertNode;
             insertNode.color = 1;
         } else {
-            while (!isLeaf(node)){
+            // keep tracking down until reach to leaf, then add the node on the leaf
+            while (node != null) {
                 temp = node;
                 // if node is less than data, data is greater than the node's value, then goes right
-                if (node.key.compareTo(data) < 0){
+                if (node.key.compareTo(data) < 0) {
                     node = node.rightChild;
-                }
-                if (node.key.compareTo(data) > 0){
+                } else {
                     node = node.leftChild;
                 }
             }
             insertNode.parent = temp;
-            if (temp.key.compareTo(data) < 0){
-                temp.rightChild = insertNode;
+            keyTemp = (String) temp.key;
+
+            //debug ---
+            if (getSibling(temp) != null){
+                Node sib = getSibling(temp);
+                sibKey = (String) sib.key;
+                System.out.println(sibKey);
             }
-            else {
+            // ----
+            if (temp.key.compareTo(data) < 0) {
+                temp.rightChild = insertNode;
+            } else {
                 temp.leftChild = insertNode;
             }
         }
@@ -137,8 +147,6 @@ public class RedBlackTree<Key extends Comparable<Key>> {
         insertNode.color = 0;
         fixTree(insertNode);
     }
-
-
 
     /**
      * searches for a key.
@@ -166,7 +174,6 @@ public class RedBlackTree<Key extends Comparable<Key>> {
         return theNode;
     }
 
-
     /**
      * left, resp. right, rotate around the node parameter.
      * @param n
@@ -177,7 +184,11 @@ public class RedBlackTree<Key extends Comparable<Key>> {
         // y: temp
         Node node = n;
         Node temp = node.rightChild;
-        Node originalParent = node.parent;
+        Node originalParent = null;
+
+        if (getParent(node) != null){
+            originalParent = getParent(node);
+        }
 
         // 2. connect B and x
         Node B = temp.leftChild;
@@ -221,11 +232,15 @@ public class RedBlackTree<Key extends Comparable<Key>> {
         // x: temp
         Node node = n;
         Node temp = node.leftChild;
-        Node originalParent = node.parent;
+        Node originalParent = null;
+
+        if (getParent(node) != null){
+            originalParent = getParent(node);
+        }
 
         // 2. connect B and y
         Node B = temp.rightChild;
-        node.leftChild = B; // so at this point, B get both node-x and temp-y points to it
+        node.leftChild = B; // so at this` point, B get both node-x and temp-y points to it
         // make sure B is not a leaf, update nodes' values for B and x
         if (B != null){
             // Connect B with parent node: node
@@ -264,14 +279,44 @@ public class RedBlackTree<Key extends Comparable<Key>> {
      * @param current
      */
     public void fixTree(RedBlackTree.Node<String> current) {
+        // debug
+        String keyValue = current.key;
+
+        Node originalParent = null;
+        String keyP;
+        Node parent = null;
+        Node grandParent = null;
+        String keyGP;
+        Node aunt = null;
+        String auntK;
+
         // not sure if it is the original parent, or if it is necessary
-        Node originalParent = current.parent;
-        Node grandParent = getGrandparent(current);
-        Node parent = current.parent;
-        Node aunt = getAunt(current);
+        if (getParent(current) != null){
+            originalParent = getParent(current);
+            keyP = getParent(current).key;
+            // ---
+            System.out.println(keyP);
+            parent = current.parent;
+            String p = current.parent.key;
+            // ---
+            System.out.println(p);
+        }
+        if (getGrandparent(current) != null) {
+            grandParent = getGrandparent(current);
+            keyGP = getGrandparent(current).key;
+            // ---
+            System.out.println(keyGP);
+        }
+        if (getAunt(current) != null) {
+            aunt = getAunt(current);
+            //---
+            auntK = getAunt(current).key;
+            System.out.println(auntK);
+        }
+
 
         // 1) current is the root node. Make it black and quit.
-        if (current == root){
+        if (current.parent == null){
             current.color = 1;
             return;
         }
@@ -385,8 +430,6 @@ public class RedBlackTree<Key extends Comparable<Key>> {
         else
             return null;
     }
-
-
 
     /**
      * returns the parent of your parent node, if it doesn?t exist return null.
