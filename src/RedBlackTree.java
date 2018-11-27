@@ -3,7 +3,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import static java.lang.System.currentTimeMillis;
+import static java.lang.System.in;
 
+// Key is the general type
 public class RedBlackTree<Key extends Comparable<Key>> {
     //an instance variable that points to the root RBNode.
     private RedBlackTree.Node<String> root;
@@ -30,18 +32,17 @@ public class RedBlackTree<Key extends Comparable<Key>> {
             return key.compareTo(n.key);  	//this > that  >0
         }
 
-        public boolean isLeaf(){
-            if (this.equals(root) && this.leftChild == null && this.rightChild == null)
-                return true;
-            if (this.equals(root))
-                return false;
-            if (this.leftChild == null && this.rightChild == null){
-                return true;
-            }
-            return false;
-        }
+//        public boolean isLeaf(){
+//            if (this.equals(root) && this.leftChild == null && this.rightChild == null)
+//                return true;
+//            if (this.equals(root))
+//                return false;
+//            if (this.leftChild == null && this.rightChild == null){
+//                return true;
+//            }
+//            return false;
+//        }
     }
-
 
     public boolean isLeaf(RedBlackTree.Node<String> n){
         // if only the root, it is leaf
@@ -64,6 +65,19 @@ public class RedBlackTree<Key extends Comparable<Key>> {
         void visit(Node<Key> n);
     }
 
+    public void preOrderVisit(Visitor<String> v) {
+        preOrderVisit(root, v);
+    }
+
+    private static void preOrderVisit(RedBlackTree.Node<String> n, Visitor<String> v) {
+        if (n == null) {
+            return;
+        }
+        v.visit(n);
+        preOrderVisit(n.leftChild, v);
+        preOrderVisit(n.rightChild, v);
+    }
+
     public void printTree(){  //preorder: visit, go left, go right
         RedBlackTree.Node<String> currentNode = root;
         printTree(currentNode);
@@ -75,25 +89,56 @@ public class RedBlackTree<Key extends Comparable<Key>> {
      */
     public void printTree(RedBlackTree.Node<String> node){
         System.out.print(node.key);
-        if (node.isLeaf()){
+        if (isLeaf(node)){
             return;
         }
         printTree(node.leftChild);
         printTree(node.rightChild);
     }
 
+    public void insert(String data) {
+        addNode(root, data);
+    }
+
     /**
      * place a new node in the RB tree with data the parameter and color it red.
      * @param data
      */
-    public void addNode(String data, Node node) {  	//this < that  <0.  this > that  >0
+    public void addNode(Node node, String data) {  	//this < that  <0.  this > that  >0
+        Node temp = null;
+        // give the data a node
+        Node insertNode = new Node(data);
 
-
+        // if there is no node at all, new node becomes the root
+        if (node == null){
+            root = insertNode;
+            insertNode.color = 1;
+        } else {
+            while (!isLeaf(node)){
+                temp = node;
+                // if node is less than data, data is greater than the node's value, then goes right
+                if (node.key.compareTo(data) < 0){
+                    node = node.rightChild;
+                }
+                if (node.key.compareTo(data) > 0){
+                    node = node.leftChild;
+                }
+            }
+            insertNode.parent = temp;
+            if (temp.key.compareTo(data) < 0){
+                temp.rightChild = insertNode;
+            }
+            else {
+                temp.leftChild = insertNode;
+            }
+        }
+        insertNode.leftChild = null;
+        insertNode.rightChild = null;
+        insertNode.color = 0;
+        fixTree(insertNode);
     }
 
-    public void insert(String data) {
-        addNode(data, root);
-    }
+
 
     /**
      * searches for a key.
@@ -102,10 +147,23 @@ public class RedBlackTree<Key extends Comparable<Key>> {
      */
     public RedBlackTree.Node<String> lookup(String k){
         //fill
-        Node current = root;
-        if (k.compareTo(current.key.toString()) < 0){
+        return lookup(root, k);
+    }
 
+    public RedBlackTree.Node<String> lookup(Node node, String k){
+        //fill
+        Node theNode = null;
+        if (node != null){
+            // if the node's value is less than the look up value "k", then go left
+            if (node.key.compareTo(k) < 0){
+                lookup(node.leftChild, k);
+            } else if (node.key.compareTo(k) > 0){
+                lookup(node.rightChild, k);
+            } else {
+                theNode = node;
+            }
         }
+        return theNode;
     }
 
 
@@ -283,19 +341,6 @@ public class RedBlackTree<Key extends Comparable<Key>> {
             return true;
         }
         return false;
-    }
-
-    public void preOrderVisit(Visitor<String> v) {
-        preOrderVisit(root, v);
-    }
-
-    private static void preOrderVisit(RedBlackTree.Node<String> n, Visitor<String> v) {
-        if (n == null) {
-            return;
-        }
-        v.visit(n);
-        preOrderVisit(n.leftChild, v);
-        preOrderVisit(n.rightChild, v);
     }
 
     /**
