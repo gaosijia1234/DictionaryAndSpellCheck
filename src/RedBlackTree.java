@@ -102,7 +102,7 @@ public class RedBlackTree<Key extends Comparable<Key>> {
 
     /**
      * place a new node in the RB tree with data the parameter and color it red.
-     * @param data
+     * @param data the data wants to be added
      */
     public void addNode(Node node, String data) {  	//this < that  <0.  this > that  >0
         Node temp = null;
@@ -266,7 +266,7 @@ public class RedBlackTree<Key extends Comparable<Key>> {
     public void fixTree(RedBlackTree.Node<String> current) {
         // not sure if it is the original parent, or if it is necessary
         Node originalParent = current.parent;
-        Node grandParent = current.parent.parent;
+        Node grandParent = getGrandparent(current);
         Node parent = current.parent;
         Node aunt = getAunt(current);
 
@@ -336,6 +336,11 @@ public class RedBlackTree<Key extends Comparable<Key>> {
 
     }
 
+    /**
+     * if the node exist but the key doesn't
+     * @param n node
+     * @return true if the node doesn't have a value, false if the node has a value
+     */
     public boolean isEmpty(RedBlackTree.Node<String> n){
         if (n.key == null){
             return true;
@@ -349,11 +354,14 @@ public class RedBlackTree<Key extends Comparable<Key>> {
      * @return
      */
     public RedBlackTree.Node<String> getSibling(RedBlackTree.Node<String> n){
-        if (isLeftChild(n.parent, n)){
-            return n.parent.rightChild;
+        if (n.parent != null) {
+            if (isLeftChild(n.parent, n)) {
+                return n.parent.rightChild;
+            } else
+                return n.parent.leftChild;
         }
         else
-            return n.parent.leftChild;
+            return null;
     }
 
     /**
@@ -370,13 +378,27 @@ public class RedBlackTree<Key extends Comparable<Key>> {
             return null;
     }
 
+    public RedBlackTree.Node<String> getParent(RedBlackTree.Node<String> n){
+        if ((n.parent != null)){
+            return n.parent;
+        }
+        else
+            return null;
+    }
+
+
+
     /**
      * returns the parent of your parent node, if it doesn?t exist return null.
      * @param n
      * @return
      */
     public RedBlackTree.Node<String> getGrandparent(RedBlackTree.Node<String> n){
-        return n.parent.parent;
+        if (n.parent != null && n.parent.parent != null){
+            return n.parent.parent;
+        }
+        else
+            return null;
     }
 
     public boolean isLeftChild(RedBlackTree.Node<String> parent, RedBlackTree.Node<String> child)

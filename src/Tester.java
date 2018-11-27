@@ -44,6 +44,7 @@ public class Tester {
             BufferedReader br = new BufferedReader(new FileReader(file));
             while ((st = br.readLine()) != null) {
                 words = st.split("\\s+");
+//                words = {"aaaa", "aaaaa"};
                 for (String s : words) {
                     node = redBlackTree.lookup(s);
                     // if node is not found, it is null
