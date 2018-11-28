@@ -21,6 +21,7 @@ public class RBTTester {
         rbt.insert("I");
         rbt.insert("J");
         assertEquals("DBACFEHGIJ", makeString(rbt));
+        // above works
         String str="Color: 1, Key:D Parent: \n"+
                 "Color: 1, Key:B Parent: D\n"+
                 "Color: 1, Key:A Parent: B\n"+
@@ -51,19 +52,25 @@ public class RBTTester {
         return v.result;
     }
 
-    public static String makeStringDetails(RedBlackTree t) {
+    public static String makeStringDetails(RedBlackTree redBlackTree) {
         {
             class MyVisitor implements RedBlackTree.Visitor {
                 String result = "";
                 public void visit(RedBlackTree.Node n)
                 {
                     if(!(n.key).equals(""))
-                        result = result +"Color: "+n.color+", Key:"+n.key+" Parent: "+n.parent.key+"\n";
+                        if (n.parent == null){
+                            result = result +"Color: "+n.color+", Key:"+n.key+" Parent: "+"\n";
+                        }
+                        else {
+                            result = result +"Color: "+n.color+", Key:"+n.key+" Parent: "+n.parent.key+"\n";
+                        }
 
                 }
             };
             MyVisitor v = new MyVisitor();
-            t.preOrderVisit(v);
+            redBlackTree.preOrderVisit(v);
+
             return v.result;
         }
     }

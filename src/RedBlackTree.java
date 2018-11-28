@@ -76,6 +76,7 @@ public class RedBlackTree<Key extends Comparable<Key>> {
         v.visit(n);
         preOrderVisit(n.leftChild, v);
         preOrderVisit(n.rightChild, v);
+
     }
 
     public void printTree(){  //preorder: visit, go left, go right
@@ -88,7 +89,9 @@ public class RedBlackTree<Key extends Comparable<Key>> {
      * @param node
      */
     public void printTree(RedBlackTree.Node<String> node){
-        System.out.print(node.key);
+        if (node != null) {
+            System.out.print(node.key);
+        }
         if (isLeaf(node)){
             return;
         }
@@ -108,8 +111,8 @@ public class RedBlackTree<Key extends Comparable<Key>> {
         Node temp = null;
         // give the data a node
         Node insertNode = new Node(data);
-        String keyTemp;
-        String sibKey;
+//        String keyTemp;
+//        String sibKey;
 
         // at the first time, root passed into node, if the root is null
         if (node == null){
@@ -127,13 +130,13 @@ public class RedBlackTree<Key extends Comparable<Key>> {
                 }
             }
             insertNode.parent = temp;
-            keyTemp = (String) temp.key;
+//            keyTemp = (String) temp.key;
 
             //debug ---
             if (getSibling(temp) != null){
                 Node sib = getSibling(temp);
-                sibKey = (String) sib.key;
-                System.out.println(sibKey);
+//                sibKey = (String) sib.key;
+//                System.out.println(sibKey);
             }
             // ----
             if (temp.key.compareTo(data) < 0) {
@@ -153,25 +156,26 @@ public class RedBlackTree<Key extends Comparable<Key>> {
      * @param k
      * @return
      */
-    public RedBlackTree.Node<String> lookup(String k){
+    public boolean lookup(String k){
         //fill
         return lookup(root, k);
     }
 
-    public RedBlackTree.Node<String> lookup(Node node, String k){
+    public boolean lookup(Node node, String k){
         //fill
-        Node theNode = null;
-        if (node != null){
+        boolean found = false;
+        while (node != null && !found){
             // if the node's value is less than the look up value "k", then go left
-            if (node.key.compareTo(k) < 0){
-                lookup(node.leftChild, k);
-            } else if (node.key.compareTo(k) > 0){
-                lookup(node.rightChild, k);
+            if (node.key.compareTo(k) > 0){
+                node = node.leftChild;
+            } else if (node.key.compareTo(k) < 0){
+                node = node.rightChild;
             } else {
-                theNode = node;
+                found = true;
+                break;
             }
         }
-        return theNode;
+        return found;
     }
 
     /**
@@ -295,23 +299,23 @@ public class RedBlackTree<Key extends Comparable<Key>> {
             originalParent = getParent(current);
             keyP = getParent(current).key;
             // ---
-            System.out.println(keyP);
+//            System.out.println(keyP);
             parent = current.parent;
-            String p = current.parent.key;
+//            String p = current.parent.key;
             // ---
-            System.out.println(p);
+//            System.out.println(p);
         }
         if (getGrandparent(current) != null) {
             grandParent = getGrandparent(current);
-            keyGP = getGrandparent(current).key;
+//            keyGP = getGrandparent(current).key;
             // ---
-            System.out.println(keyGP);
+//            System.out.println(keyGP);
         }
         if (getAunt(current) != null) {
             aunt = getAunt(current);
             //---
-            auntK = getAunt(current).key;
-            System.out.println(auntK);
+//            auntK = getAunt(current).key;
+//            System.out.println(auntK);
         }
 
 
