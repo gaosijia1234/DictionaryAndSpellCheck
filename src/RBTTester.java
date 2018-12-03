@@ -40,7 +40,7 @@ public class RBTTester {
 
     public static String makeString(RedBlackTree t)
     {
-        class MyVisitor implements RedBlackTree.Visitor {
+        class MyVisitor implements Visitor {
             String result = "";
             public void visit(RedBlackTree.Node n)
             {
@@ -54,7 +54,7 @@ public class RBTTester {
 
     public static String makeStringDetails(RedBlackTree redBlackTree) {
         {
-            class MyVisitor implements RedBlackTree.Visitor {
+            class MyVisitor implements Visitor {
                 String result = "";
                 public void visit(RedBlackTree.Node n)
                 {
@@ -74,8 +74,6 @@ public class RBTTester {
             return v.result;
         }
     }
-
-
 
 }
   

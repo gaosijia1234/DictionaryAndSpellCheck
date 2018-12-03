@@ -18,7 +18,7 @@ public class RedBlackTree<Key extends Comparable<Key>> {
         Node<String> leftChild;
         Node<String> rightChild;
         boolean isRed;
-        int color; // 1 is black, 0 is red
+        int color = 0; // 1 is black, 0 is red
 
         public Node(Key key){
             this.key = key;
@@ -31,17 +31,6 @@ public class RedBlackTree<Key extends Comparable<Key>> {
         public int compareTo(Node<Key> n){ 	//this < that  <0
             return key.compareTo(n.key);  	//this > that  >0
         }
-
-//        public boolean isLeaf(){
-//            if (this.equals(root) && this.leftChild == null && this.rightChild == null)
-//                return true;
-//            if (this.equals(root))
-//                return false;
-//            if (this.leftChild == null && this.rightChild == null){
-//                return true;
-//            }
-//            return false;
-//        }
     }
 
     public boolean isLeaf(RedBlackTree.Node<String> n){
@@ -57,14 +46,6 @@ public class RedBlackTree<Key extends Comparable<Key>> {
         return false;
     }
 
-    public interface Visitor<Key extends Comparable<Key>> {
-        /**
-         This method is called at each node.
-         @param n the visited node
-         */
-        void visit(Node<Key> n);
-    }
-
     public void preOrderVisit(Visitor<String> v) {
         preOrderVisit(root, v);
     }
@@ -73,23 +54,13 @@ public class RedBlackTree<Key extends Comparable<Key>> {
         if (n == null) {
             return;
         }
-//        v.visit(n);
-        System.out.println(n.key + n.color);
-        //
-        if (n.leftChild != null) {
-//            System.out.println(n.leftChild.key);
-        }
-        if (n.rightChild != null){
-//            System.out.println(n.rightChild.key);
-        }
-        //
+        v.visit(n);
         preOrderVisit(n.leftChild, v);
         preOrderVisit(n.rightChild, v);
     }
 
     public void insert(String data) {
         addNode(root, data);
-//        insert(root, data);
     }
 
     /**
@@ -100,10 +71,6 @@ public class RedBlackTree<Key extends Comparable<Key>> {
         Node temp = null;
         // give the data a node
         Node insertNode = new Node(data);
-        //
-        String keyTemp;
-        //
-        String sibKey;
 
         // at the first time, root passed into node, if the root is null
         if (node == null){
@@ -121,18 +88,6 @@ public class RedBlackTree<Key extends Comparable<Key>> {
                 }
             }
             insertNode.parent = temp;
-            //
-            keyTemp = (String) temp.key;
-            System.out.println(keyTemp);
-
-            //debug ---
-            if (getSibling(temp) != null){
-                Node sib = getSibling(temp);
-                //
-                sibKey = (String) sib.key;
-                System.out.println(sibKey);
-            }
-            // ----
             if (temp.key.compareTo(data) < 0) {
                 temp.rightChild = insertNode;
             } else {
@@ -141,69 +96,27 @@ public class RedBlackTree<Key extends Comparable<Key>> {
         }
         insertNode.leftChild = null;
         insertNode.rightChild = null;
-        insertNode.color = 0;
         fixTree(insertNode);
     }
-
-//    private Node insert(Node node, String data) {
-//        Node temp = null;
-//        Node insertNode = new Node(data);
-//        while (node != null) {
-//            temp = node;
-//            if (node.key.compareTo(data) > 0)
-//                node = node.leftChild;
-//            else
-//                node = node.rightChild;
-//        }
-//        insertNode.parent = temp;
-//        if (temp == null) {
-//            root = insertNode;
-//            insertNode.color = 1;//black root
-//            return root;
-//        } else {
-//            if (insertNode.key.compareTo(data) < 0)
-//                temp.leftChild = insertNode;
-//            else
-//                temp.rightChild = insertNode;
-//        }
-//        insertNode.leftChild = null;
-//        insertNode.rightChild = null;
-//        insertNode.color = 0;
-//        fixTree(insertNode);
-//        return root;
-//
-//    }
 
     /**
      * recursive function: recursively traverse the tree to make it a Red Black tree.
      * @param current
      */
     public void fixTree(RedBlackTree.Node<String> current) {
-        // debug
-        String keyValue = current.key;
-
         Node parent = null;
-        String keyP;
         Node grandParent = null;
-        String keyGP;
         Node aunt = null;
-        String auntK;
 
         // not sure if it is the original parent, or if it is necessary
         if (getParent(current) != null){
             parent = getParent(current);
-            keyP = getParent(current).key;
-//            System.out.println(keyP);
         }
         if (getGrandparent(current) != null) {
             grandParent = getGrandparent(current);
-//            keyGP = getGrandparent(current).key;
-//            System.out.println(keyGP);
         }
         if (getAunt(current) != null) {
             aunt = getAunt(current);
-//            auntK = getAunt(current).key;
-//            System.out.println(auntK);
         }
 
         // 1) current is the root node. Make it black and quit.
@@ -247,7 +160,7 @@ public class RedBlackTree<Key extends Comparable<Key>> {
                     parent.color = 1;
                     grandParent.color = 0;
                     rotateRight(grandParent);
-                    return;
+//                    return;
                 }
 
                 // D) grandparent ?parent (is right child)? current (is right child) case.
@@ -257,7 +170,7 @@ public class RedBlackTree<Key extends Comparable<Key>> {
                     parent.color = 1;
                     grandParent.color = 0;
                     rotateLeft(grandParent);
-                    return;
+//                    return;
                 }
             }
 
@@ -308,13 +221,10 @@ public class RedBlackTree<Key extends Comparable<Key>> {
         else {
             // if x is less than x's parent, x is the left child, so y is one of the left childs
             if (node.compareTo(originalParent) < 0) {
-                temp = originalParent.leftChild;
                 originalParent.leftChild = temp;
                 // connect y with initial parent
                 temp.parent = originalParent;
-
             } else {
-                temp = originalParent.rightChild;
                 originalParent.rightChild = temp;
                 // parent connect y with initial parent
                 temp.parent = originalParent;
@@ -356,13 +266,11 @@ public class RedBlackTree<Key extends Comparable<Key>> {
         else {
             // if x is less than x's parent, x is the left child, so y is one of the left childs
             if (node.compareTo(originalParent) < 0) {
-                temp = originalParent.leftChild;
                 originalParent.leftChild = temp;
                 // connect y with initial parent
                 temp.parent = originalParent;
 
             } else {
-                temp = originalParent.rightChild;
                 originalParent.rightChild = temp;
                 // parent connect y with initial parent
                 temp.parent = originalParent;
